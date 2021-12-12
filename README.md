@@ -4,7 +4,7 @@
 
 ## Features
 - On powerup measures the internal temperature of the sauna with a DS18B20 temperature sensor
-- Sends every 5 seconds and temperature update via mqtt
+- Sends every 5 seconds an temperature update via mqtt
 - Flash storage of configuration against power lose
 - Webpage based configuration via accesspoint
 - Controllabled via Homeassistant and JSON
