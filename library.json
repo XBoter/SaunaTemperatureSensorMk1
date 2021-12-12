@@ -1,0 +1,18 @@
+{
+  "name": "https://github.com/XBoter/SaunaTemperatureSensorMk1",
+  "keywords": "esp, sensor, nodemuc, homeassistant",
+  "description": "Library for the SaunaTemperatureSensorMk1 PCB",
+  "homepage": "https://github.com/XBoter/SaunaTemperatureSensorMk1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XBoter/SaunaTemperatureSensorMk1"
+  },
+  "version": "0.0.0",
+  "authors": {
+    "name": "Nico Weidenfeller",
+    "url": "https://nicoweidenfeller.com"
+  },
+  "exclude": [".github"],
+  "frameworks": "arduino",
+  "platforms": "*"
+}

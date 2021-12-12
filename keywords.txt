@@ -1,0 +1,12 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SaunaTemperatureSensorMk1 KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+_setup  KEYWORD2
+_loop   KEYWORD2
