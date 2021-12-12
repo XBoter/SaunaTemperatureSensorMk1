@@ -106,12 +106,20 @@ void Information::Run()
         memNetwork->clientName = this->network->clientName;
     }
 
-    // -- Temperature
-    if (this->temperatureSensor->temperature != memTemperatureSensor->temperature)
+    // -- Temperature Celsius
+    if (!this->isEqual(this->temperatureSensor->getTemperatureCelsius(), this->memTemperatureSensor->getTemperatureCelsius()))
     {
-        FormatPrintTemperature(String(this->temperatureSensor->temperature), "Grad Celsius");
+        FormatPrintTemperature(String(this->temperatureSensor->getTemperatureCelsius()), "Celsius");
 
-        memTemperatureSensor->temperature = this->temperatureSensor->temperature;
+        this->memTemperatureSensor->setTemperatureCelsius(this->temperatureSensor->getTemperatureCelsius());
+    }
+
+    // -- Temperature Fahrenheit
+    if (!this->isEqual(this->temperatureSensor->getTemperatureFahrenheit(), this->memTemperatureSensor->getTemperatureFahrenheit()))
+    {
+        FormatPrintTemperature(String(this->temperatureSensor->getTemperatureFahrenheit()), "Fahrenheit");
+
+        this->memTemperatureSensor->setTemperatureFahrenheit(this->temperatureSensor->getTemperatureFahrenheit());
     }
 };
 
@@ -189,7 +197,7 @@ void Information::FormatPrintTemperature(String temperature,
 
     // Value name
     InsertPrint();
-    Serial.print(F("Temperature changed"));
+    Serial.print(F("Temperature changed "));
 
     // Parameter value
     InsertPrint();
@@ -429,3 +437,15 @@ void Information::InsertPrint()
         Serial.print("");
     }
 };
+
+/**
+ * @brief Compares to floating numbers and returns true if they are equal
+ * 
+ * @param f1 
+ * @param f2 
+ * @return boolean true when equal
+ */
+boolean Information::isEqual(float f1, float f2)
+{
+    return ((int)(f1 * 100)) == ((int)(f2 * 100));
+}

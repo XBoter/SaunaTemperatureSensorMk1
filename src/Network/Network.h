@@ -48,6 +48,7 @@ private:
     TemperatureSensor *temperatureSensor;
 
     ConfiguredData data = {};
+    DynamicJsonDocument doc = DynamicJsonDocument(1024);
 
     WiFiClient wifiMqtt;
     WiFiUDP ntpUDP;
@@ -74,7 +75,6 @@ private:
     String codeVersion = "";
 
 public:
-    DynamicJsonDocument doc = DynamicJsonDocument(2048);
     PubSubClient mqttClient;
     NetworkWiFiState wifiState = NetworkWiFiState::StartWifi;
     NetworkMQTTState mqttState = NetworkMQTTState::StartMqtt;
@@ -91,7 +91,7 @@ public:
     // Network MQTT Info
     String clientName = "";
     String brokerIpAddress = "";
-    int brokerPort = -1; // Unknown
+    int brokerPort = -1;   // Unknown
     int clientState = -99; // Unknown
 
     // MQTT Data
@@ -103,9 +103,9 @@ public:
     unsigned long prevMillisPublishHeartbeat = 0;
     unsigned long prevMillisPublishNetwork = 0;
 
-    uint32_t timeoutPublishTemperatureData = 5000;  // 5 Seconds
-    uint32_t timeoutPublishHeartbeat = 5000;        // 5 Seconds
-    uint32_t timeoutPublishNetwork = 600000;        // 10 Minutes
+    uint32_t timeoutPublishTemperatureData = 5000; // 5 Seconds
+    uint32_t timeoutPublishHeartbeat = 5000;       // 5 Seconds
+    uint32_t timeoutPublishNetwork = 600000;       // 10 Minutes
 
     // ## Functions ## //
 private:
@@ -124,11 +124,15 @@ private:
     void PublishHomeassistantTemperatureData();
     void PublishHomeassistantNetwork();
     void PublishHomeassistantHeartbeat();
+    void PublishHomeassistantCodeVersion();
 
     // == Json
     void PublishJsonTemperatureData();
     void PublishJsonNetwork();
     void PublishJsonHeartbeat();
+    void PublishJsonCodeVersion();
+
+    String PrettyTime(uint8_t hour, uint8_t minute, uint8_t second);
 
 public:
     // ==== Republish / Publish functions

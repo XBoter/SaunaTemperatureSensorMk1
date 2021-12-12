@@ -3,7 +3,7 @@
 // Webserver instance and handle
 ESP8266WebServer server(80);
 /*
-    Gets called on access to url 192.168.4.1/
+    Gets called on access to url 192.168.1.1/
 */
 
 /**

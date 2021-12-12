@@ -3,7 +3,8 @@
 /**
  * Empty constructor
  */
-Network::Network(String codeVersion){
+Network::Network(String codeVersion)
+{
     this->codeVersion = codeVersion;
 };
 
@@ -34,9 +35,8 @@ bool Network::Init()
         mqttClient.setServer(data.mqttBrokerIpAddress.c_str(),
                              data.mqttBrokerPort);
         //mqttClient.setCallback(mqttCallback);
-        mqttClient.setCallback([this](char *topic, byte *payload, unsigned int length) {
-            this->MqttCallback(topic, payload, length);
-        });
+        mqttClient.setCallback([this](char *topic, byte *payload, unsigned int length)
+                               { this->MqttCallback(topic, payload, length); });
 
         timeClient.begin();
 
@@ -189,7 +189,7 @@ void Network::HandleMqtt()
                 // "SaunaController/" + data.mqttClientName + "/Version"
 
                 // ==== Specific ==== //
-                
+
                 // ==== Virtual ==== //
 
                 // ================ Json ================ //
@@ -203,7 +203,8 @@ void Network::HandleMqtt()
                 // ==== Virtual ==== //
 
                 // === Republish == //
-                PublishTemperatureData();
+                PublishHeartbeat();
+                PublishNetwork();
                 PublishCodeVersion();
 
                 mqttState = NetworkMQTTState::SuperviseMqttConnection;
@@ -300,11 +301,10 @@ void Network::MqttCallback(char *topic, byte *payload, unsigned int length)
     */
 
     // ================ Global ================ //
-   
-    // ================ Specific ================ //
-    
-    // ================ Virtual ================ //
 
+    // ================ Specific ================ //
+
+    // ================ Virtual ================ //
 
     // # ================================ JSON ================================ //
     /*
@@ -312,11 +312,10 @@ void Network::MqttCallback(char *topic, byte *payload, unsigned int length)
     */
 
     // ================ Global ================ //
-   
+
     // ================ Specific ================ //
-    
+
     // ================ Virtual ================ //
-    
 }
 
 void Network::HandleRepublish()
@@ -324,21 +323,17 @@ void Network::HandleRepublish()
 
     unsigned long curMillis = millis();
 
-    // == Temperature Data
-    if (curMillis - prevMillisPublishTemperatureData >= timeoutPublishTemperatureData)
-    {
-        PublishTemperatureData();
-    }
-
     // == Heartbeat
-    if (curMillis - prevMillisPublishHeartbeat >= timeoutPublishHeartbeat)
+    if (curMillis - this->prevMillisPublishHeartbeat >= this->timeoutPublishHeartbeat)
     {
+        this->prevMillisPublishHeartbeat = curMillis;
         PublishHeartbeat();
     }
 
     // == Network
-    if (curMillis - prevMillisPublishNetwork >= timeoutPublishNetwork)
+    if (curMillis - this->prevMillisPublishNetwork >= this->timeoutPublishNetwork)
     {
+        this->prevMillisPublishNetwork = curMillis;
         PublishNetwork();
     }
 }
@@ -356,9 +351,11 @@ void Network::PublishHomeassistantTemperatureData()
     String message = "";
 
     // ==== Temperature Data
-    //message = String(stNetworkMotionData.motionDetectionEnabled);
-    //mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/MotionDetection/Enable/state").c_str(), message.c_str());
- }
+    message = String(this->temperatureSensor->getTemperatureCelsius());
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/Temperature/Celcius/value").c_str(), message.c_str());
+    message = String(this->temperatureSensor->getTemperatureFahrenheit());
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/Temperature/Fahrenheit/value").c_str(), message.c_str());
+}
 
 void Network::PublishHomeassistantNetwork()
 {
@@ -371,16 +368,67 @@ void Network::PublishHomeassistantNetwork()
     mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/Network/MACAddress/state").c_str(), message.c_str());
 }
 
+void Network::PublishHomeassistantCodeVersion()
+{
+    String message = "";
+
+    // ==== Network
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/Version").c_str(), codeVersion.c_str());
+}
+
 void Network::PublishJsonHeartbeat()
 {
+    String message = "";
+
+    this->doc["message"] = "pulse";
+    this->doc["time"] = this->PrettyTime(this->stNetworkTimeData.hour, this->stNetworkTimeData.minute, this->stNetworkTimeData.second);
+
+    serializeJson(this->doc, message);
+    this->doc.clear();
+
+    // ==== Heartbeat
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/JSON/Heartbeat").c_str(), message.c_str());
 }
 
 void Network::PublishJsonTemperatureData()
 {
+    String message = "";
+
+    this->doc["celsius"] = String(this->temperatureSensor->getTemperatureCelsius());
+    this->doc["fahrenheit"] = String(this->temperatureSensor->getTemperatureFahrenheit());
+
+    serializeJson(this->doc, message);
+    this->doc.clear();
+
+    // ==== Temperature Data
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/JSON/Temperature").c_str(), message.c_str());
 }
 
 void Network::PublishJsonNetwork()
 {
+    String message = "";
+
+    this->doc["ip_address"] = this->ipAddress;
+    this->doc["mac_address"] = this->macAddress;
+
+    serializeJson(this->doc, message);
+    this->doc.clear();
+
+    // ==== Network
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/JSON/Network").c_str(), message.c_str());
+}
+
+void Network::PublishJsonCodeVersion()
+{
+    String message = "";
+
+    this->doc["code_version"] = this->codeVersion;
+
+    serializeJson(this->doc, message);
+    this->doc.clear();
+
+    // ==== Network
+    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/JSON/Version").c_str(), message.c_str());
 }
 
 /**
@@ -388,7 +436,6 @@ void Network::PublishJsonNetwork()
  */
 void Network::PublishHeartbeat()
 {
-    prevMillisPublishHeartbeat = millis();
 
     // == Home Assistant
     PublishHomeassistantHeartbeat();
@@ -402,7 +449,6 @@ void Network::PublishHeartbeat()
  */
 void Network::PublishTemperatureData()
 {
-    prevMillisPublishTemperatureData = millis();
 
     // == Home Assistant
     PublishHomeassistantTemperatureData();
@@ -416,7 +462,6 @@ void Network::PublishTemperatureData()
  */
 void Network::PublishNetwork()
 {
-    prevMillisPublishNetwork = millis();
 
     // == Home Assistant
     PublishHomeassistantNetwork();
@@ -430,5 +475,23 @@ void Network::PublishNetwork()
  */
 void Network::PublishCodeVersion()
 {
-    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/Version").c_str(), codeVersion.c_str());
-} 
+
+    // == Home Assistant
+    PublishHomeassistantCodeVersion();
+
+    // == JSON
+    PublishJsonCodeVersion();
+}
+
+/**
+ * @brief Returns a pretty string with the current time
+ * 
+ * @param hour 
+ * @param minute 
+ * @param second 
+ * @return String 
+ */
+String Network::PrettyTime(uint8_t hour, uint8_t minute, uint8_t second)
+{
+    return String(hour) + ":" + String(minute) + ":" + String(second);
+}

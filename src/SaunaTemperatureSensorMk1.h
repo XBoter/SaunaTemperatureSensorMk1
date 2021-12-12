@@ -14,7 +14,7 @@
 #define Programmer "Nico Weidenfeller"
 #define Created "11.12.2021"
 #define LastModifed "12.12.2021"
-#define Version "0.0.0"
+#define Version "1.0.0"
 
 //++++ Global Defines ++++//
 #define BAUDRATE 115200

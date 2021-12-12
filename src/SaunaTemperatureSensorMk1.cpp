@@ -36,7 +36,7 @@ void SaunaTemperatureSensorMk1::_setup()
                          &information,
                          &temperatureSensor);
 
-    temperatureSensor.setReference();
+    temperatureSensor.setReference(&network);
 
     information.setReference(&network,
                              &memNetwork,

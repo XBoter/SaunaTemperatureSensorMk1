@@ -79,4 +79,5 @@ public:
     String BoolToString(bool b);
     String BollToConnectionState(bool b);
     String IntToClientStateInfo(int i);
+    boolean isEqual(float f1, float f2);
 };
