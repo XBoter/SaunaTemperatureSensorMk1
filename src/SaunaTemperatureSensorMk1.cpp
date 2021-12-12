@@ -1,6 +1,6 @@
 #include "SaunaTemperatureSensorMk1.h"
 
-SaunaTemperatureSensorMk1::LEDControllerMk4()
+SaunaTemperatureSensorMk1::SaunaTemperatureSensorMk1()
 {
 }
 
@@ -32,28 +32,18 @@ void SaunaTemperatureSensorMk1::_setup()
     ota.setReference(&network,
                      &configuration);
 
-    i2c.setReference();
-
     network.setReference(&configuration,
                          &information,
-                         &pirReader,
-                         &powerMessurement);
+                         &temperatureSensor);
 
-    powerMessurement.setReference(&i2c,
-                                  &network);
-
-    ledDriver.setReference(&i2c,
-                           &network,
-                           &pirReader);
+    temperatureSensor.setReference();
 
     information.setReference(&network,
                              &memNetwork,
-                             &pirReader,
-                             &memPirReader);
+                             &temperatureSensor,
+                             &memTemperatureSensor);
 
-    pirReader.setReference(&network);
-
-    configuration.setReference(&ledDriver);
+    configuration.setReference();
 
     // Init configuration
     configuration.Init();
@@ -83,24 +73,18 @@ void SaunaTemperatureSensorMk1::_loop()
         case 0:
             // Reset init flag
             ota.init = false;
-            i2c.init = false;
+            temperatureSensor.init = false;
             network.init = false;
-            powerMessurement.init = false;
-            ledDriver.init = false;
             information.init = false;
-            pirReader.init = false;
             state++;
             break;
 
         case 1:
             // Init all components
             ota.Init();
-            i2c.Init();
+            temperatureSensor.Init();
             network.Init();
-            //powerMessurement.Init();
-            ledDriver.Init();
             information.Init();
-            pirReader.Init();
             state++;
             break;
 
@@ -108,24 +92,12 @@ void SaunaTemperatureSensorMk1::_loop()
             // Run all components
             ota.Run();
             yield(); 
-            i2c.Run();
+            temperatureSensor.Run();
             yield(); 
             network.Run();
             yield(); 
-            //powerMessurement.Run();
-            //yield(); 
-            ledDriver.Run();
-            yield(); 
             information.Run();
             yield(); 
-            pirReader.Run();
-            yield(); 
-
-            // Reset virtual pir sensor at end of current loop after all components got called
-            if (network.virtualPIRSensorTriggered)
-            {
-                network.virtualPIRSensorTriggered = false;
-            }
 
             break;
         }

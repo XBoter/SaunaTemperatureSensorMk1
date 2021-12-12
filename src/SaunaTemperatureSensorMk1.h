@@ -7,6 +7,7 @@
 #include "Network/Network.h"
 #include "OTA/OTA.h"
 #include "Structs/Structs.h"
+#include "TemperatureSensor/TemperatureSensor.h"
 
 //-------------------- Basic Information --------------------//
 #define Name "Sauna Temperature Sensor Mk1"
@@ -16,7 +17,7 @@
 #define Version "0.0.0"
 
 //++++ Global Defines ++++//
-#define BAUDRATE 11520B0
+#define BAUDRATE 115200
 #define DS18B20_TEMPERATURE_SENSOR_PIN D2
 
 class SaunaTemperatureSensorMk1
@@ -34,6 +35,8 @@ private:
 
     // ## Components ## //
     Configuration configuration = Configuration();
+    TemperatureSensor temperatureSensor = TemperatureSensor();
+    TemperatureSensor memTemperatureSensor = TemperatureSensor();
     Network network = Network(Version);
     Network memNetwork = Network(Version); // Memory Version Instance for Information
     OTA ota = OTA();

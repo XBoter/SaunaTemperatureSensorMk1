@@ -13,7 +13,7 @@ class TemperatureSensor : public IBaseClass
 {
     // ================================ Constructor / Important ================================ //
 public:
-    Network();
+    TemperatureSensor();
     void setReference();
     bool init = false;
 
@@ -26,7 +26,7 @@ public:
     // ================================ Data ================================ //
 private:
 public:
-
+    String temperature;
 
     // ================================ Methods ================================ //
 private:

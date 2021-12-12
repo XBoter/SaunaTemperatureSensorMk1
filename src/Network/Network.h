@@ -134,5 +134,6 @@ public:
     // ==== Republish / Publish functions
     void PublishTemperatureData();
     void PublishNetwork();
+    void PublishHeartbeat();
     void PublishCodeVersion();
 };

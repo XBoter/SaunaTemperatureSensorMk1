@@ -32,6 +32,8 @@ class Configuration : public IBaseClass {
     // ## Data ## //
    private:
 
+    IPAddress apIP = IPAddress(192, 168, 1, 1);
+
     unsigned long prevMillisReset = 0;
     unsigned long prevMillisResetBlink = 0;
     unsigned long prevMillisAPShutdown = 0;

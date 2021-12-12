@@ -73,7 +73,6 @@ void Configuration::Run() {
         return;
     }
 
-    bool isLedDriverConfigureMode = false;
     unsigned long curMillis = millis();
     // Check if button is pressed longer then 10 sec
     if (digitalRead(0) == 0) {
@@ -111,9 +110,11 @@ void Configuration::Run() {
                     }
                     break;
 
-                    // Create hotspot default IP Address of ESP 192.168.4.1.
+                    // Create Access Point
                 case 3:
-                    WiFi.softAP("Sauna Temperature Sensor Mk1");
+                    WiFi.mode(WIFI_AP);
+                    WiFi.softAPConfig(this->apIP, this->apIP, IPAddress(255, 255, 255, 0));
+                    WiFi.softAP("Sauna Temperature Sensor Mk1","",0,0,1);
                     state++;
                     break;
 

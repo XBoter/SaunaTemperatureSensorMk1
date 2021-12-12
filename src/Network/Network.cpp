@@ -43,8 +43,6 @@ bool Network::Init()
         wifiState = NetworkWiFiState::StartWifi;
         mqttState = NetworkMQTTState::StartMqtt;
 
-        virtualPIRSensorTriggered = false;
-
         Serial.println(F("Network initialized"));
         init = true;
     }
@@ -323,8 +321,6 @@ void Network::MqttCallback(char *topic, byte *payload, unsigned int length)
 
 void Network::HandleRepublish()
 {
-    // For now disabled
-    return;
 
     unsigned long curMillis = millis();
 
@@ -360,8 +356,8 @@ void Network::PublishHomeassistantTemperatureData()
     String message = "";
 
     // ==== Temperature Data
-    message = String(stNetworkMotionData.motionDetectionEnabled);
-    mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/MotionDetection/Enable/state").c_str(), message.c_str());
+    //message = String(stNetworkMotionData.motionDetectionEnabled);
+    //mqttClient.publish(("SaunaController/" + data.mqttClientName + "/HomeAssistant/MotionDetection/Enable/state").c_str(), message.c_str());
  }
 
 void Network::PublishHomeassistantNetwork()
