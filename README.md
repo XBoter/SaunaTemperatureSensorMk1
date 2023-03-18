@@ -1,3 +1,7 @@
+# Info
+
+:warning: Source code got archived and is getting replaced by the newer version '5V Sauna Temperature Sensor Mk1 V2' :warning:
+
 # SaunaTemperatureSensorMk1
 
 ![build](https://github.com/XBoter/SaunaTemperatureSensorMk1/workflows/build/badge.svg)
